@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel src -w --out-dir build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "babel --presets react src -w --out-dir build"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "babel-cli": "^6.6.5"
+    "babel-cli": "^6.6.5",
+    "babel-preset-react": "^6.5.0"
   }
 }

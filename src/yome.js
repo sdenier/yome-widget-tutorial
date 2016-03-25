@@ -23,6 +23,8 @@ function l(x) {
   return x
 }
 
+
+
 var Yome = Yome || {}
 
 Yome.initialState = () => {
@@ -32,6 +34,8 @@ Yome.initialState = () => {
 }
 
 Yome.state = Yome.state || Yome.initialState()
+
+
 
 Yome.sideCount = (state) => state.sides.length
 
@@ -57,3 +61,24 @@ Yome.pointsToPointsString = (points) =>
 
 l(Yome.pointsToPointsString(Yome.sidePoints(Yome.state)))
 
+
+
+Yome.drawWalls = (state) =>
+  <polygon points={Yome.pointsToPointsString(Yome.sidePoints(state))}></polygon>
+
+Yome.svgWorld = (children) =>
+  <svg height="500" width="500" viewBox="-250 -250 500 500" preserveAspectRatio="xMidYMid meet">
+    {children}
+  </svg>
+
+Yome.playArea = (children) =>
+  ReactDOM.render(Yome.svgWorld(children), document.getElementById("playarea"))
+
+Yome.clearPlayArea = () =>
+  ReactDOM.unmountComponentAtNode(document.getElementById("playarea"))
+
+Yome.playArea(Yome.drawWalls({sides: [1,2,3,4,5,6]}))
+// Yome.playArea(Yome.drawWalls({sides: [1,2,3,4,5,6,7]}))
+// Yome.playArea(Yome.drawWalls({sides: [1,2,3,4,5,6,7,8]}))
+
+// Yome.clearPlayArea()
