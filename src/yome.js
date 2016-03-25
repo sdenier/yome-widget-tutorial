@@ -56,15 +56,62 @@ var YOME_SIDE_SIZE = 180
 Yome.sidePoints = (state) =>
   state.sides.map((_, i) => Yome.radialPoint(YOME_SIDE_SIZE, i * Yome.sliceTheta(state)))
 
+Yome.windowPoints = (st) => {
+  const theta = Yome.sliceTheta(st),
+        indent = theta / 6;
+  return [Yome.radialPoint(160, indent),
+          Yome.radialPoint(160, theta - indent),
+          Yome.radialPoint(100, theta / 2)];
+}
+
+Yome.doorPoints = (st) => {
+  const indent = Yome.sliceTheta(st) / 8;
+  return [Yome.radialPoint(165, indent ),
+          Yome.radialPoint(165, -indent),
+          Yome.radialPoint(90,  -indent),
+          Yome.radialPoint(90, indent)];
+}
+
 Yome.pointsToPointsString = (points) =>
   points.map(p => p.x + ',' + p.y).join(' ')
 
-l(Yome.pointsToPointsString(Yome.sidePoints(Yome.state)))
+// l(Yome.pointsToPointsString(Yome.sidePoints(Yome.state)))
 
 
 
 Yome.drawWalls = (state) =>
   <polygon points={Yome.pointsToPointsString(Yome.sidePoints(state))}></polygon>
+
+Yome.drawWindow = (st) =>
+  <polygon points={ Yome.pointsToPointsString(Yome.windowPoints(st)) }></polygon>
+
+Yome.drawDoor = (st) =>
+  <polygon points={ Yome.pointsToPointsString(Yome.doorPoints(st)) }></polygon>
+
+Yome.drawLine = (line) =>
+  <line x1={line.start.x} y1={line.start.y}
+        x2={line.end.x} y2={line.end.y}>
+  </line>
+
+Yome.drawZipDoor = (st) => {
+  const theta   = Yome.sliceTheta(st),
+        indent  = 0.15 * (theta / 6),
+        lines   = [0,1,2,3,4,5,6,7,8].map((x) => {
+          const dist = 170 - (10 * x);
+          return {start: Yome.radialPoint(dist, -indent),
+                  end:   Yome.radialPoint(dist, indent)}});
+  lines.push({start: Yome.radialPoint(180, 0),
+              end: Yome.radialPoint(90, 0)});
+  return <g>{lines.map(Yome.drawLine)}</g>;
+}
+
+Yome.drawStoveVent = (st) => {
+  const theta = Yome.sliceTheta(st),
+        point = Yome.radialPoint(155, 0);
+  return <ellipse cx={point.x} cy={point.y} rx="14" ry="8"
+                  key="stove-vent"></ellipse>
+}
+
 
 Yome.svgWorld = (children) =>
   <svg height="500" width="500" viewBox="-250 -250 500 500" preserveAspectRatio="xMidYMid meet">
@@ -77,8 +124,12 @@ Yome.playArea = (children) =>
 Yome.clearPlayArea = () =>
   ReactDOM.unmountComponentAtNode(document.getElementById("playarea"))
 
-Yome.playArea(Yome.drawWalls({sides: [1,2,3,4,5,6]}))
-// Yome.playArea(Yome.drawWalls({sides: [1,2,3,4,5,6,7]}))
-// Yome.playArea(Yome.drawWalls({sides: [1,2,3,4,5,6,7,8]}))
+Yome.playArea(<g>
+    {Yome.drawStoveVent(Yome.state)}
+    {Yome.drawZipDoor(Yome.state)}
+    {Yome.drawDoor(Yome.state)}
+    {Yome.drawWindow(Yome.state)}
+    {Yome.drawWalls(Yome.state)}
+  </g>)
 
 // Yome.clearPlayArea()
