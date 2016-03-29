@@ -232,12 +232,37 @@ Yome.windowControls = (state) =>
   state.sides.map((side, i) => Yome.windowControl(state, side, i))
 
 
+Yome.addRemoveZipDoor = (i) =>
+  () => {
+    const side = Yome.state.sides[i]
+    side.corner = side.corner ? null : 'zip-door'
+  }
+
+Yome.cornerControl = (state, side, i) => {
+  let theta = Yome.sliceTheta(state) * (i + 0.5),
+      pos = Yome.worldPosition(Yome.radialPoint(220, theta)),
+      add = ! side.corner
+  return <div className='control-holder'
+              style={ {top: pos.y, left: pos.x} }>
+      <a className={'corner-control-offset ' + (add ? 'add' : 'remove')}
+        onClick={ Yome.eventHandler(Yome.addRemoveZipDoor(i)) }
+        href='#'>
+        { (add ? '+' : '-') + ' zipdoor' }
+      </a>
+    </div>
+}
+
+Yome.cornerControls = (state) =>
+  state.sides.map((side, i) => Yome.cornerControl(state, side, i))
+
+
 
 Yome.widget = (state) =>
   <div className='yome-widget'>
     { Yome.sideCountInput(Yome.state) }
     <div className='yome-widget-body'>
       { Yome.windowControls(state) }
+      { Yome.cornerControls(state) }
       { Yome.svgWorld(Yome.drawYome(state)) }
     </div>
   </div>
