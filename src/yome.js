@@ -232,23 +232,43 @@ Yome.windowControls = (state) =>
   state.sides.map((side, i) => Yome.windowControl(state, side, i))
 
 
-Yome.addRemoveZipDoor = (i) =>
+Yome.addRemoveCornerFeature = (i, type) =>
   () => {
     const side = Yome.state.sides[i]
-    side.corner = side.corner ? null : 'zip-door'
+    side.corner = side.corner ? null : type
   }
+
+Yome.cornerControlClassName = (side, type) =>
+  side.corner === type ? 'remove' : (side.corner ? 'hidden' : 'add')
+
+Yome.cornerControlLinks = (side, i) => {
+  let add = ! side.corner
+  return <div>
+    <a className={ Yome.cornerControlClassName(side, 'stove-vent') }
+      onClick={ Yome.eventHandler(Yome.addRemoveCornerFeature(i, 'stove-vent')) }
+      href='#'>
+      { (add ? '+' : '-') + ' stove-vent' }
+    </a>
+    <a className={ Yome.cornerControlClassName(side, 'zip-door') }
+      onClick={ Yome.eventHandler(Yome.addRemoveCornerFeature(i, 'zip-door')) }
+      href='#'>
+      { (add ? '+' : '-') + ' zip-door' }
+    </a>
+    <a className={ Yome.cornerControlClassName(side, 'door-frame') }
+      onClick={ Yome.eventHandler(Yome.addRemoveCornerFeature(i, 'door-frame')) }
+      href='#'>
+      { (add ? '+' : '-') + ' door-frame' }
+    </a>
+  </div>
+}
 
 Yome.cornerControl = (state, side, i) => {
   let theta = Yome.sliceTheta(state) * (i + 0.5),
-      pos = Yome.worldPosition(Yome.radialPoint(220, theta)),
-      add = ! side.corner
-  return <div className='control-holder'
-              style={ {top: pos.y, left: pos.x} }>
-      <a className={'corner-control-offset ' + (add ? 'add' : 'remove')}
-        onClick={ Yome.eventHandler(Yome.addRemoveZipDoor(i)) }
-        href='#'>
-        { (add ? '+' : '-') + ' zipdoor' }
-      </a>
+      pos = Yome.worldPosition(Yome.radialPoint(220, theta))
+  return <div className='control-holder' style={ {top: pos.y, left: pos.x} }>
+      <div className='corner-control-offset'>
+        { Yome.cornerControlLinks(side, i) }
+      </div>
     </div>
 }
 
