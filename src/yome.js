@@ -143,16 +143,26 @@ Yome.sideSlice = (state, i) => {
   }
 }
 
+Yome.drawYome = (state) =>
+  <g transform={ 'rotate(' + (Yome.sliceDeg(state) / 2) + ',0,0)' }>
+    { Yome.drawWalls(Yome.state) }
+    { state.sides.map((_, i) => Yome.sideSlice(state, i)) }
+  </g>
+
 Yome.svgWorld = (children) =>
   <svg height="500" width="500" viewBox="-250 -250 500 500" preserveAspectRatio="xMidYMid meet">
     {children}
   </svg>
+
+
 
 Yome.playArea = (children) =>
   ReactDOM.render(Yome.svgWorld(children), document.getElementById("playarea"))
 
 Yome.clearPlayArea = () =>
   ReactDOM.unmountComponentAtNode(document.getElementById("playarea"))
+
+// Yome.playArea(Yome.drawYome(Yome.exampleData))
 
 // Yome.playArea(<g>
 //     {Yome.drawStoveVent(Yome.state)}
@@ -166,3 +176,17 @@ Yome.clearPlayArea = () =>
 // Yome.playArea(Yome.sideSlice(Yome.exampleData, 0))
 
 // Yome.clearPlayArea()
+
+
+
+Yome.widget = (state) =>
+  <div className='yome-widget'>
+    <div className='yome-widget-body'>
+      { Yome.svgWorld(Yome.drawYome(state)) }
+    </div>
+  </div>
+
+Yome.render = () =>
+  ReactDOM.render(Yome.widget(Yome.state), document.getElementById('app'))
+
+Yome.render()
