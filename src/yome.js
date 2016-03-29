@@ -35,6 +35,15 @@ Yome.initialState = () => {
 
 Yome.state = Yome.state || Yome.initialState()
 
+Yome.exampleData = ((state)=>{
+  state.sides[0].face = 'window'
+  state.sides[0].corner = 'zip-door'
+  state.sides[3].face = 'window'
+  state.sides[5].corner = 'door-frame'
+  state.sides[5].face = 'window'
+  state.sides[7].corner = 'stove-vent'
+  return state
+})(Yome.initialState())
 
 
 Yome.sideCount = (state) => state.sides.length
@@ -112,6 +121,27 @@ Yome.drawStoveVent = (st) => {
                   key="stove-vent"></ellipse>
 }
 
+Yome.itemRenderDispatch = {
+  window: Yome.drawWindow,
+  'door-frame': Yome.drawDoor,
+  'zip-door': Yome.drawZipDoor,
+  'stove-vent': Yome.drawStoveVent
+}
+
+Yome.itemRender = (type, state) =>
+  (Yome.itemRenderDispatch[type] || (x => null))(state)
+
+Yome.sliceDeg = (state) => 360 / Yome.sideCount(state)
+
+Yome.sideSlice = (state, i) => {
+  const side = state.sides[i]
+  if (side.corner || side.face) {
+    return <g transform={ 'rotate(' + (Yome.sliceDeg(state) * i) + ',0,0)' }>
+      {Yome.itemRender(side.corner, state)}
+      {Yome.itemRender(side.face, state)}
+    </g>
+  }
+}
 
 Yome.svgWorld = (children) =>
   <svg height="500" width="500" viewBox="-250 -250 500 500" preserveAspectRatio="xMidYMid meet">
@@ -124,12 +154,15 @@ Yome.playArea = (children) =>
 Yome.clearPlayArea = () =>
   ReactDOM.unmountComponentAtNode(document.getElementById("playarea"))
 
-Yome.playArea(<g>
-    {Yome.drawStoveVent(Yome.state)}
-    {Yome.drawZipDoor(Yome.state)}
-    {Yome.drawDoor(Yome.state)}
-    {Yome.drawWindow(Yome.state)}
-    {Yome.drawWalls(Yome.state)}
-  </g>)
+// Yome.playArea(<g>
+//     {Yome.drawStoveVent(Yome.state)}
+//     {Yome.drawZipDoor(Yome.state)}
+//     {Yome.drawDoor(Yome.state)}
+//     {Yome.drawWindow(Yome.state)}
+//     {Yome.drawWalls(Yome.state)}
+//   </g>)
+
+// Yome.playArea(Yome.sideSlice(Yome.exampleData, 5))
+// Yome.playArea(Yome.sideSlice(Yome.exampleData, 0))
 
 // Yome.clearPlayArea()
