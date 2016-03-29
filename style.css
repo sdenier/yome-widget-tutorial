@@ -11,7 +11,17 @@ svg line, svg polygon, svg ellipse {
     -webkit-animation: appear 0.7s;
 }
 
-.yome-widget-body { position: relative; }
+.yome-widget .top-control {
+    width: 200px;
+    margin: auto;
+}
+
+.yome-widget-body {
+    width: 500px;
+    position: relative;
+    margin: auto;
+}
+
 .control-holder   { position: absolute; }
 
 .window-control-offset {
